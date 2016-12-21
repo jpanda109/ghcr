@@ -1,7 +1,10 @@
 {
     "compilerOptions": {
         "outDir": "dist",
-        "declaration": true
+        "declaration": true,
+        "strictNullChecks": true,
+        "noImplicitAny": true,
+        "removeComments": true
     },
     "include": [
         "src/**/*"
