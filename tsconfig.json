@@ -4,7 +4,10 @@
         "declaration": true,
         "strictNullChecks": true,
         "noImplicitAny": true,
-        "removeComments": true
+        "removeComments": true,
+        "newLine": "LF",
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
     },
     "include": [
         "src/**/*"

@@ -1,10 +1,10 @@
 {
   "name": "ghcr",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "bin": "./dist/bin/ghcr.js",
   "scripts": {
-    "prepublish": "tsc",
+    "prepublish": "npm install && tsc",
     "pretest": "tsc",
     "test": "mocha dist/test/*.js"
   },
