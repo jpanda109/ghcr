@@ -6,13 +6,23 @@
 
 import { execSync } from "child_process";
 
-function root(): string {
-    let root = execSync("git rev-parse --show-toplevel", {encoding: "utf8"});
+function execSyncUTF8(command: string): string {
+    return execSync(command, {encoding: "utf8"});
+}
+
+export function root(): string {
+    let root = execSyncUTF8("git rev-parse --show-toplevel");
     return root;
 }
 
-function lsTree(): string[] {
-    let output = execSync("git ls-tree", {encoding: "utf8"});
+export function lsTree(): string[] {
+    let output = execSyncUTF8("git ls-tree");
+    let files = output.split("\n");
+    return files;
+}
+
+export function diffLocal(): string[] {
+    let output = execSyncUTF8("git diff --name-only")
     let files = output.split("\n");
     return files;
 }
