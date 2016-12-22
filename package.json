@@ -4,7 +4,7 @@
   "description": "",
   "bin": "./dist/bin/ghcr.js",
   "scripts": {
-    "prepublish": "npm install && tsc",
+    "prepublish": "tsc",
     "pretest": "tsc",
     "test": "mocha dist/test/*.js"
   },
