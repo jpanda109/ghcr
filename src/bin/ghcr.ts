@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import * as yargs from "yargs";
+import * as ghcr from "../lib/std";
 
 function checkIfValidCommand(yargs: yargs.Argv, argv: any, validSubcommands: string[]): void {
     if (argv._.length < 1) {
@@ -14,16 +15,19 @@ function checkIfValidCommand(yargs: yargs.Argv, argv: any, validSubcommands: str
     }
 }
 
-let command_todo = "todo";
-let subcommands = [ command_todo ];
+let command_show = "show";
+let subcommands = [ command_show ];
 let argv = yargs
     .command(
-        command_todo,
-        "list CRs and XCRs in current project", 
+        command_show,
+        "list CRs, XCRs, etc in current project", 
         function(yargs: yargs.Argv) {
+            yargs
+                .demand(1);
             return yargs;
         },
         function(argv: any) {
+            let crType = argv._[0];
             console.log("not implemented yet");
         }
     )

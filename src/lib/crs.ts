@@ -1,6 +1,7 @@
 import { execSync } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
+import * as git from "./git";
 
 function execSyncUTF8(command: string): string {
     return execSync(command, {encoding: "utf8"});
@@ -78,5 +79,11 @@ export function findCRs(filenames: string[], crtype: CRType): SearchResult[] {
             results.push(result);
         }
     }
+    return results;
+}
+
+export function findCRsInRepo(crtype: CRType): SearchResult[] {
+    let filenames = git.lsTree();
+    let results = findCRs(filenames, crtype);
     return results;
 }
