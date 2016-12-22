@@ -1,1 +1,1 @@
-export { findCRs, CRType } from "./crs";
+export { findCRsInRepo, CRType, stringOfCRType, crtypeOfString } from "./crs";

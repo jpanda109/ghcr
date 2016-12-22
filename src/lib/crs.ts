@@ -40,26 +40,34 @@ export function grep(pattern: string, contents: string, filename: string): Searc
 
 export type CRType = "cr" | "xcr"
 
+export function stringOfCRType(crtype: CRType): string {
+    return crtype;
+}
+
+export function crtypeOfString(s: string): CRType | null {
+    switch (s) {
+        case "cr": return "cr";
+        case "xcr": return "xcr";
+    }
+    return null;
+}
+
 export type Language = "ml" | "js"
 
 function languageOfExtname(extname: string): Language | null {
     switch (extname) {
-        case "ml": return "ml";
-        case "ts": return "js";
-        case "js": return "js";
+        case ".ml": return "ml";
+        case ".ts": return "js";
+        case ".js": return "js";
     }
     return null;
 }
 
 function createRegex(language: Language, crtype: CRType): string {
-    let base = "";
-    switch (crtype) {
-        case "cr": base = "CR"
-        case "xcr": base = "XCR"
-    }
-    base += " :[^]*"
+    let base = stringOfCRType(crtype).toUpperCase();
+    base += ":[^]*";
     switch (language) {
-        case "ml": return "\\(\\*" + base + "\\*\\)";
+        case "ml": return "\\(\\* " + base + "\\*\\)";
         case "js": return "/\\*" + base + "\\*/";
     }
 }
@@ -72,7 +80,7 @@ export function findCRs(filenames: string[], crtype: CRType): SearchResult[] {
         if (language === null) {
             continue;
         }
-        let regex = createRegex(language, "cr");
+        let regex = createRegex(language, crtype);
         let contents = fs.readFileSync(filename, "utf8");
         let file_results = grep(regex, contents, filename);
         for (let result of file_results) {

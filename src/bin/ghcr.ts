@@ -27,8 +27,15 @@ let argv = yargs
             return yargs;
         },
         function(argv: any) {
-            let crType = argv._[0];
-            console.log("not implemented yet");
+            let crtype = ghcr.crtypeOfString(argv._[1]);
+            if (crtype === null) {
+                console.log("CR type must be one of [ cr | xcr ]");
+                return;
+            }
+            let results = ghcr.findCRsInRepo(crtype);
+            for (let result of results) {
+                console.log(results);
+            }
         }
     )
     .demand(1)

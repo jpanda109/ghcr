@@ -16,7 +16,7 @@ export function root(): string {
 }
 
 export function lsTree(): string[] {
-    let output = execSyncUTF8("git ls-tree");
+    let output = execSyncUTF8("git ls-tree HEAD --name-only");
     let files = output.split("\n");
     return files;
 }
