@@ -9,7 +9,7 @@
     "test": "mocha dist/test/*.js"
   },
   "author": "",
-  "license": "MIT",
+  "license": "ISC",
   "dependencies": {
     "@types/node": "^6.0.52",
     "@types/yargs": "^6.3.3",

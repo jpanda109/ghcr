@@ -39,12 +39,12 @@ export function grep(pattern: string, contents: string, filename: string): Searc
 
 export type CRType = "cr" | "xcr"
 
-export type Language = "ml" | "ts" | "js"
+export type Language = "ml" | "js"
 
 function languageOfExtname(extname: string): Language | null {
     switch (extname) {
         case "ml": return "ml";
-        case "ts": return "ts";
+        case "ts": return "js";
         case "js": return "js";
     }
     return null;
@@ -59,7 +59,6 @@ function createRegex(language: Language, crtype: CRType): string {
     base += " :[^]*"
     switch (language) {
         case "ml": return "\\(\\*" + base + "\\*\\)";
-        case "ts": return "/\\*" + base + "\\*/";
         case "js": return "/\\*" + base + "\\*/";
     }
 }
