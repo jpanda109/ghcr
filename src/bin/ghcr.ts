@@ -34,7 +34,7 @@ let argv = yargs
             }
             let results = ghcr.findCRsInRepo(crtype);
             for (let result of results) {
-                console.log(results);
+                console.log(result);
             }
         }
     )

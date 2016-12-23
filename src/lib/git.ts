@@ -26,3 +26,9 @@ export function diffLocal(): string[] {
     let files = output.split("\n");
     return files;
 }
+
+export function currentCommit(): string {
+    let output = execSyncUTF8("git rev-parse HEAD");
+    output = output.trim();
+    return output;
+}
