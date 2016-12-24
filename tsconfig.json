@@ -7,7 +7,8 @@
         "removeComments": true,
         "newLine": "LF",
         "noUnusedLocals": true,
-        "noUnusedParameters": true
+        "noUnusedParameters": true,
+        "lib": ["es6"]
     },
     "include": [
         "src/**/*"
