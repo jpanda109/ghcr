@@ -48,7 +48,13 @@ let argv = yargs
         },
         function(_argv: any) {
             let files = ghcr.getFilesNeedingReview();
-            files.forEach(console.log);
+            files.forEach((fileMeta) => {
+                console.log("%s: %i", 
+                            fileMeta.filename, 
+                            fileMeta.linesAddedSinceReview 
+                            + fileMeta.linesRemovedSinceReview
+                            );
+            });
         }
     )
     .command(

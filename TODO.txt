@@ -7,3 +7,4 @@ testing
 refactor business logic out of storage
 file globbing for review
 .ghcrignore file
+handle when it's first commit of file (diff-tree --root)

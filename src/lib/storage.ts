@@ -10,7 +10,9 @@ export type Commit = string;
 export interface FileMeta {
     filename: string,
     lastReviewed: Commit | null,
-    needsReview: boolean
+    needsReview: boolean,
+    linesAddedSinceReview: number,
+    linesRemovedSinceReview: number
 }
 
 interface Storage {
@@ -44,6 +46,18 @@ export function init(): void {
     writeStorage(storage);
 }
 
+function countNumLines(filename: string): number {
+    let output = fs.readFileSync(filename, "utf8");
+    let count = 0;
+    for (let i = 0; i < output.length; i++) {
+        let c = output[i];
+        if (c === "\n") {
+            count += 1;
+        }
+    }
+    return count;
+}
+
 function _update(storage: Storage): void {
     let currentFiles = git.lsTree();
     let currentCommit = git.getCurrentCommit();
@@ -52,14 +66,19 @@ function _update(storage: Storage): void {
             storage.files[filename] = {
                 filename,
                 lastReviewed: null,
-                needsReview: true
+                needsReview: true,
+                linesAddedSinceReview: countNumLines(filename),
+                linesRemovedSinceReview: 0
             };
         }
     });
     for (let filename in storage.files) {
         let fileMeta = storage.files[filename]!;
-        if (git.hasDiff(fileMeta.filename, currentCommit, fileMeta.lastReviewed)) {
+        let diffInfo = git.getDiff(fileMeta.filename, currentCommit, fileMeta.lastReviewed);
+        if (diffInfo !== null) {
             fileMeta.needsReview = true;
+            fileMeta.linesAddedSinceReview = diffInfo.linesAdded;
+            fileMeta.linesRemovedSinceReview = diffInfo.linesRemoved;
         }
     }
 }

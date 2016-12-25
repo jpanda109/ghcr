@@ -29,12 +29,43 @@ export function diffNames(commit1: string, commit2: string): string[] {
     return files;
 }
 
-export function hasDiff(filename: string, commit1: string, commit2: string | null): boolean {
-    let command = commit2 === null ? 
-            util.format("git diff-tree --name-only -r --root %s %s", commit1, filename) 
-            : util.format("git diff-tree --name-only -r %s %s %s", commit1, commit2, filename);
-    let output = execSyncUTF8(command);
-    return output.length > 0;
+export interface DiffInfo {
+    filename: string,
+    linesAdded: number,
+    linesRemoved: number
+}
+
+export function getDiff(filename: string, commit1: string, commit2: string | null): DiffInfo | null {
+    if (commit2 === null) {
+        let command = util.format("git diff-tree --numstat -r --root %s %s", commit1, filename) 
+        let output = execSyncUTF8(command);
+        if (output.length === 0) {
+            return null
+        } else {
+            // skip first line of output since it outputs commit hash when --root passed in
+            let outputInfo = output.split("\n")[1].split("\t");
+            let diffInfo: DiffInfo = {
+                filename,
+                linesAdded: parseInt(outputInfo[0]),
+                linesRemoved: parseInt(outputInfo[1])
+            };
+            return diffInfo;
+        }
+    } else {
+        let command = util.format("git diff-tree --numstat -r %s %s %s", commit1, commit2, filename);
+            let output = execSyncUTF8(command);
+        if (output.length === 0) {
+            return null
+        } else {
+            let outputInfo = output.split("\t");
+            let diffInfo: DiffInfo = {
+                filename,
+                linesAdded: parseInt(outputInfo[0]),
+                linesRemoved: parseInt(outputInfo[1])
+            };
+            return diffInfo;
+        }
+    }
 }
 
 export function getCurrentCommit(): string {
