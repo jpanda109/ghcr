@@ -1,10 +1,16 @@
 save size of diff (git diff-tree <--shortstat | --numstat>)
 handle review of nonexistent file
 review fileglob
-auto git hook when init
+init git hook
+init .gitignore
 ascii table for todo and show
 testing
 refactor business logic out of storage
 file globbing for review
 .ghcrignore file
+only support review of supported file extensions
+
+
+
+DONE:
 handle when it's first commit of file (diff-tree --root)
