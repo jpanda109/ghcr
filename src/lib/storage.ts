@@ -14,7 +14,7 @@ export interface FileMeta {
 }
 
 interface Storage {
-    files: Map<string, FileMeta>
+    files: { [filename: string]: FileMeta | undefined}
 }
 
 function getStoragePath(): string {
@@ -25,18 +25,20 @@ function getStoragePath(): string {
 
 function readStorage(): Storage {
     let storagePath = getStoragePath();
-    let storage = require(storagePath);
+    let storage = JSON.parse(fs.readFileSync(storagePath, "utf8"));
     return storage;
 }
 
 function writeStorage(storage: Storage): void {
     let storagePath = getStoragePath();
-    fs.writeFileSync(storagePath, storage);
+    fs.writeFileSync(storagePath, JSON.stringify(storage));
 }
 
 export function init(): void {
+    let storagePath = getStoragePath();
+    fs.closeSync(fs.openSync(storagePath, 'w'));
     let storage: Storage = {
-        files: new Map()
+        files: {}
     }
     writeStorage(storage);
 }
@@ -46,27 +48,32 @@ export function update(): void {
     let currentFiles = git.lsTree();
     let currentCommit = git.getCurrentCommit();
     currentFiles.forEach((filename) => {
-        if (!storage.files.has(filename)) {
-            storage.files.set(filename, {
+        if (storage.files[filename] === undefined) {
+            storage.files[filename] = {
                 filename,
                 lastReviewed: null,
                 needsReview: true
-            });
+            };
         }
     });
-    storage.files.forEach((fileMeta) => {
+    for (let filename in storage.files) {
+        let fileMeta = storage.files[filename]!;
         if (git.hasDiff(fileMeta.filename, currentCommit, fileMeta.lastReviewed)) {
             fileMeta.needsReview = true;
         }
-    });
+    }
     writeStorage(storage);
 }
 
 export function getFilesNeedingReview(): FileMeta[] {
     let storage = readStorage();
-    let files = Array.from(storage.files.values()).filter((fileMeta) => {
-        fileMeta.needsReview
-    });
+    let files = [];
+    for (let filename in storage.files) {
+        let fileMeta = storage.files[filename]!;
+        if (fileMeta.needsReview) {
+            files.push(fileMeta);
+        }
+    }
     return files; 
 }
 
@@ -74,11 +81,9 @@ export function review(filenames: string[]) {
     let storage = readStorage();
     let currentCommit = git.getCurrentCommit();
     filenames.forEach((filename) => {
-        let fileMeta = storage.files.get(filename);
-        if (fileMeta !== undefined) {
-            fileMeta.lastReviewed = currentCommit;
-            fileMeta.needsReview = false;
-        }
+        let fileMeta = storage.files[filename]!;
+        fileMeta.lastReviewed = currentCommit;
+        fileMeta.needsReview = false;
     });
     writeStorage(storage);
 }

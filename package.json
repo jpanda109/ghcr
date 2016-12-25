@@ -6,7 +6,8 @@
   "scripts": {
     "prepublish": "tsc",
     "pretest": "tsc",
-    "test": "mocha dist/test/*.js"
+    "test": "mocha dist/test/*.js",
+    "start": "./dist/bin/ghcr.js"
   },
   "author": "",
   "license": "ISC",

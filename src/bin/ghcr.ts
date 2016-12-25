@@ -16,7 +16,10 @@ function checkIfValidCommand(yargs: yargs.Argv, argv: any, validSubcommands: str
 }
 
 let command_show = "show";
-let subcommands = [ command_show ];
+let command_todo = "todo";
+let command_update = "update";
+let command_init = "init";
+let subcommands = [ command_show, command_todo, command_update, command_init ];
 let argv = yargs
     .command(
         command_show,
@@ -33,9 +36,38 @@ let argv = yargs
                 return;
             }
             let results = ghcr.findCRsInRepo(crtype);
-            for (let result of results) {
-                console.log(result);
-            }
+            results.forEach(console.log);
+        }
+    )
+    .command(
+        command_todo,
+        "see files needing review",
+        function(yargs: yargs.Argv) {
+            return yargs;
+        },
+        function(_argv: any) {
+            let files = ghcr.getFilesNeedingReview();
+            files.forEach(console.log);
+        }
+    )
+    .command(
+        command_update,
+        "update ghcr storage",
+        function(yargs: yargs.Argv) {
+            return yargs;
+        },
+        function(_argv: any) {
+            ghcr.update();
+        }
+    )
+    .command(
+        command_init,
+        "init ghcr in repo",
+        function(yargs: yargs.Argv) {
+            return yargs;
+        },
+        function(_argv: any) {
+            ghcr.init();
         }
     )
     .demand(1)

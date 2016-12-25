@@ -8,7 +8,7 @@ import { execSync } from "child_process";
 import * as util from "util";
 
 function execSyncUTF8(command: string): string {
-    return execSync(command, {encoding: "utf8"});
+    return execSync(command, {encoding: "utf8"}).trim();
 }
 
 export function root(): string {
