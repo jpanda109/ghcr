@@ -7,5 +7,6 @@ export {
 export {
     getFilesNeedingReview,
     init,
-    update
+    update,
+    review
 } from "./storage";

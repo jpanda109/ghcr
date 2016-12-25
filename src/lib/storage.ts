@@ -31,7 +31,7 @@ function readStorage(): Storage {
 
 function writeStorage(storage: Storage): void {
     let storagePath = getStoragePath();
-    fs.writeFileSync(storagePath, JSON.stringify(storage));
+    fs.writeFileSync(storagePath, JSON.stringify(storage, null, "\t"));
 }
 
 export function init(): void {
@@ -40,11 +40,11 @@ export function init(): void {
     let storage: Storage = {
         files: {}
     }
+    _update(storage);
     writeStorage(storage);
 }
 
-export function update(): void {
-    let storage = readStorage();
+function _update(storage: Storage): void {
     let currentFiles = git.lsTree();
     let currentCommit = git.getCurrentCommit();
     currentFiles.forEach((filename) => {
@@ -62,6 +62,11 @@ export function update(): void {
             fileMeta.needsReview = true;
         }
     }
+}
+
+export function update(): void {
+    let storage = readStorage();
+    _update(storage);
     writeStorage(storage);
 }
 

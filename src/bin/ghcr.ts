@@ -19,7 +19,8 @@ let command_show = "show";
 let command_todo = "todo";
 let command_update = "update";
 let command_init = "init";
-let subcommands = [ command_show, command_todo, command_update, command_init ];
+let command_review = "review";
+let subcommands = [ command_show, command_todo, command_update, command_init, command_review ];
 let argv = yargs
     .command(
         command_show,
@@ -68,6 +69,17 @@ let argv = yargs
         },
         function(_argv: any) {
             ghcr.init();
+        }
+    )
+    .command(
+        command_review + " [files...]",
+        "mark files as reviewed",
+        function(yargs: yargs.Argv) {
+            return yargs
+        },
+        function(argv: any) {
+            let filenames = argv.files;
+            ghcr.review(filenames);
         }
     )
     .demand(1)
