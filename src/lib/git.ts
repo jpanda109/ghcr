@@ -5,6 +5,7 @@
  */
 
 import { execSync } from "child_process";
+import * as util from "util";
 
 function execSyncUTF8(command: string): string {
     return execSync(command, {encoding: "utf8"});
@@ -21,10 +22,19 @@ export function lsTree(): string[] {
     return files;
 }
 
-export function diffLocal(): string[] {
-    let output = execSyncUTF8("git diff --name-only")
+export function diffNames(commit1: string, commit2: string): string[] {
+    let command = util.format("git diff-tree --name-only -r %s %s", commit1, commit2);
+    let output = execSyncUTF8(command);
     let files = output.split("\n");
     return files;
+}
+
+export function hasDiff(filename: string, commit1: string, commit2: string | null): boolean {
+    let command = commit2 === null ? 
+            util.format("git diff-tree --name-only -r --root %s %s", commit1, filename) 
+            : util.format("git diff-tree --name-only -r %s %s %s", commit1, commit2, filename);
+    let output = execSyncUTF8(command);
+    return output.length > 0;
 }
 
 export function getCurrentCommit(): string {

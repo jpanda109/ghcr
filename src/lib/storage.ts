@@ -5,13 +5,15 @@ import * as git from "./git";
 
 const storageFilename = ".ghcr";
 
+export type Commit = string;
+
 export interface FileMeta {
     filename: string,
-    reviewed: boolean
+    lastReviewed: Commit | null,
+    needsReview: boolean
 }
 
 interface Storage {
-    lastUpdatedCommit: string,
     files: Map<string, FileMeta>
 }
 
@@ -33,9 +35,7 @@ function writeStorage(storage: Storage): void {
 }
 
 export function init(): void {
-    let lastUpdatedCommit = git.getCurrentCommit();
     let storage: Storage = {
-        lastUpdatedCommit,
         files: new Map()
     }
     writeStorage(storage);
@@ -43,24 +43,42 @@ export function init(): void {
 
 export function update(): void {
     let storage = readStorage();
-    storage.lastUpdatedCommit = git.getCurrentCommit();
-    let diffedFiles = git.diffLocal();
-    diffedFiles.forEach((filename) => {
-        let fileMeta = storage.files.get(filename);
-        if (fileMeta === undefined) {
+    let currentFiles = git.lsTree();
+    let currentCommit = git.getCurrentCommit();
+    currentFiles.forEach((filename) => {
+        if (!storage.files.has(filename)) {
             storage.files.set(filename, {
                 filename,
-                reviewed: false
+                lastReviewed: null,
+                needsReview: true
             });
-        } else {
-            fileMeta.reviewed = false;
         }
-    })
+    });
+    storage.files.forEach((fileMeta) => {
+        if (git.hasDiff(fileMeta.filename, currentCommit, fileMeta.lastReviewed)) {
+            fileMeta.needsReview = true;
+        }
+    });
     writeStorage(storage);
 }
 
 export function getFilesNeedingReview(): FileMeta[] {
     let storage = readStorage();
-    let files = Array.from(storage.files.values());
+    let files = Array.from(storage.files.values()).filter((fileMeta) => {
+        fileMeta.needsReview
+    });
     return files; 
+}
+
+export function review(filenames: string[]) {
+    let storage = readStorage();
+    let currentCommit = git.getCurrentCommit();
+    filenames.forEach((filename) => {
+        let fileMeta = storage.files.get(filename);
+        if (fileMeta !== undefined) {
+            fileMeta.lastReviewed = currentCommit;
+            fileMeta.needsReview = false;
+        }
+    });
+    writeStorage(storage);
 }
