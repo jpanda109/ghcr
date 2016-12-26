@@ -37,7 +37,7 @@ export interface DiffInfo {
 
 export function getDiff(filename: string, commit1: string, commit2: string | null): DiffInfo | null {
     if (commit2 === null) {
-        let command = util.format("git diff-tree --numstat -r --root %s %s", commit1, filename) 
+        let command = util.format("git diff-tree --numstat -r --root %s -- %s", commit1, filename) 
         let output = execSyncUTF8(command);
         if (output.length === 0) {
             return null
@@ -52,7 +52,7 @@ export function getDiff(filename: string, commit1: string, commit2: string | nul
             return diffInfo;
         }
     } else {
-        let command = util.format("git diff-tree --numstat -r %s %s %s", commit1, commit2, filename);
+        let command = util.format("git diff-tree --numstat -r %s %s -- %s", commit1, commit2, filename);
             let output = execSyncUTF8(command);
         if (output.length === 0) {
             return null
