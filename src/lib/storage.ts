@@ -79,6 +79,10 @@ function _update(storage: Storage): void {
             fileMeta.needsReview = true;
             fileMeta.linesAddedSinceReview = diffInfo.linesAdded;
             fileMeta.linesRemovedSinceReview = diffInfo.linesRemoved;
+        } else if (diffInfo === null && fileMeta.lastReviewed === null && currentFiles.indexOf(filename) < 0) {
+            fileMeta.needsReview = false;
+            fileMeta.linesAddedSinceReview = 0;
+            fileMeta.linesRemovedSinceReview = 0;
         }
     }
 }

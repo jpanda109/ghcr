@@ -49,10 +49,10 @@ let argv = yargs
         function(_argv: any) {
             let files = ghcr.getFilesNeedingReview();
             files.forEach((fileMeta) => {
-                console.log("%s: %i", 
+                console.log("%s: %s %s",
                             fileMeta.filename, 
-                            fileMeta.linesAddedSinceReview 
-                            + fileMeta.linesRemovedSinceReview
+                            fileMeta.linesAddedSinceReview,
+                            fileMeta.linesRemovedSinceReview
                             );
             });
         }

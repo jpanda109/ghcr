@@ -8,9 +8,10 @@ testing
 refactor business logic out of storage
 file globbing for review
 .ghcrignore file
-only support review of supported file extensions
+make added/deleted/modified flag
 
 
 
 DONE:
 handle when it's first commit of file (diff-tree --root)
+handle deleted file
